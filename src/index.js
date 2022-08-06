@@ -1,4 +1,4 @@
-import "./nullstyle.css";
+import "antd/dist/antd.css";
 
 function root() {
   const element = document.createElement("div");
