@@ -1,3 +1,5 @@
+import "./nullstyle.css";
+
 function root() {
   const element = document.createElement("div");
   element.setAttribute("id", "root");
