@@ -5,10 +5,27 @@ module.exports = {
   mode: "development",
   entry: {
     index: "./src/index.js",
+    app: "./src/app.js",
   },
   devtool: "inline-source-map",
   devServer: {
     static: "./dist",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-react", "@babel/preset-env"],
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
