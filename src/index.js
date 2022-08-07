@@ -1,6 +1,6 @@
 import "antd/dist/antd.css";
 
-import App from "./App";
+import App from "./app";
 import { Provider } from "react-redux";
 import React from "react";
 import { createRoot } from "react-dom/client";

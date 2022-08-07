@@ -1,84 +1,30 @@
 import { Button, Col, Form, Input, Pagination, Row, Select, Tabs } from "antd";
+import React, { useEffect } from "react";
+import {
+  cardAdded,
+  getNotes,
+  selectNotes,
+  selectTimezone,
+  selectTimezoneStatus,
+} from "./components/noteCardSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 import NoteCard from "./components/NoteCard";
-import React from "react";
-import { useDispatch } from "react-redux";
 
+const { Option } = Select;
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
 export default function App() {
-  //   const data = {
-  //     text: String,
-  //     sign: String,
-  //     tz: String,
-  //     date: Record<string,any>,
-  //   };
+  const notesData = useSelector(selectNotes);
+  const timezone = useSelector(selectTimezone);
+  const timezoneStatus = useSelector(selectTimezoneStatus);
 
   const dispatch = useDispatch();
 
-  const data = [
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
-    },
-  ];
+  useEffect(() => {
+    dispatch(getNotes());
+  }, []);
 
   return (
     <Row justify="center" style={{ paddingTop: "30px" }}>
@@ -136,17 +82,37 @@ export default function App() {
                       },
                     ]}
                   >
-                    <Select size="large" />
+                    <Select
+                      size="large"
+                      disabled={timezoneStatus !== "succeeded"}
+                    >
+                      {timezone.map((value, index) => {
+                        return (
+                          <Option value={value} key={index}>
+                            {value}
+                          </Option>
+                        );
+                      })}
+                    </Select>
                   </Form.Item>
                 </Col>
                 <Col span={6} offset={18}>
                   <Form.Item>
                     <Button
-                      type="primary"
                       block
+                      type="primary"
                       size="large"
+                      disabled={timezoneStatus !== "succeeded"}
                       onClick={() => {
-                        dispatch({ type: "noteCard/increment" });
+                        // dispatch(getNotes());
+                        // dispatch(
+                        //   cardAdded({
+                        //     text: "Текст записи",
+                        //     sign: "Подпись автора",
+                        //     tz: "",
+                        //     date: "2022-10-02.2342-344232-5345345-UTF",
+                        //   })
+                        // );
                       }}
                     >
                       Создать
@@ -158,7 +124,7 @@ export default function App() {
           </TabPane>
           <TabPane tab="Записи" key="2">
             <Row gutter={[16, 16]}>
-              {data.map((value, index) => {
+              {notesData.map((value, index) => {
                 return (
                   <Col span={12} key={index}>
                     <NoteCard data={value} index={index + 1} />
