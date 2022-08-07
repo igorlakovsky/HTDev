@@ -1,8 +1,9 @@
 import { Button, Col, Form, Input, Pagination, Row, Select, Tabs } from "antd";
 import React, { useEffect } from "react";
 import {
-  cardAdded,
-  getNotes,
+  addNote,
+  getTimezone,
+  selectCurrentNoteStatus,
   selectNotes,
   selectTimezone,
   selectTimezoneStatus,
@@ -19,12 +20,18 @@ export default function App() {
   const notesData = useSelector(selectNotes);
   const timezone = useSelector(selectTimezone);
   const timezoneStatus = useSelector(selectTimezoneStatus);
+  const currentNoteStatus = useSelector(selectCurrentNoteStatus);
 
   const dispatch = useDispatch();
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    dispatch(getNotes());
+    dispatch(getTimezone());
   }, []);
+
+  useEffect(() => {
+    console.log(notesData);
+  }, [notesData]);
 
   return (
     <Row justify="center" style={{ paddingTop: "30px" }}>
@@ -32,6 +39,7 @@ export default function App() {
         <Tabs defaultActiveKey="1" size="large">
           <TabPane tab="Создать запись" key="1">
             <Form
+              form={form}
               name="textarea"
               layout="vertical"
               initialValues={{ remember: true }}
@@ -48,7 +56,7 @@ export default function App() {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your username!",
+                        message: "Введите текст записи!",
                       },
                     ]}
                   >
@@ -62,7 +70,7 @@ export default function App() {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your username!",
+                        message: "Введите подпись автора!",
                       },
                     ]}
                   >
@@ -78,7 +86,7 @@ export default function App() {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your username!",
+                        message: "Выберете часовой пояс!",
                       },
                     ]}
                   >
@@ -103,16 +111,15 @@ export default function App() {
                       type="primary"
                       size="large"
                       disabled={timezoneStatus !== "succeeded"}
+                      loading={currentNoteStatus == "loading"}
                       onClick={() => {
-                        // dispatch(getNotes());
-                        // dispatch(
-                        //   cardAdded({
-                        //     text: "Текст записи",
-                        //     sign: "Подпись автора",
-                        //     tz: "",
-                        //     date: "2022-10-02.2342-344232-5345345-UTF",
-                        //   })
-                        // );
+                        form
+                          .validateFields()
+                          .then(() => {
+                            dispatch(addNote(form.getFieldsValue()));
+                            form.setFieldValue("text", "");
+                          })
+                          .catch(() => {});
                       }}
                     >
                       Создать

@@ -8,44 +8,89 @@ const initialState = {
       text: "Текст записи",
       sign: "Подпись автора",
       tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
+      date: {
+        abbreviation: "GMT",
+        client_ip: "89.250.166.226",
+        datetime: "2022-08-07T20:21:44.115170+00:00",
+        day_of_week: 0,
+        day_of_year: 219,
+        dst: false,
+        dst_from: null,
+        dst_offset: 0,
+        dst_until: null,
+        raw_offset: 0,
+        timezone: "Africa/Abidjan",
+        unixtime: 1659903704,
+        utc_datetime: "2022-08-07T20:21:44.115170+00:00",
+        utc_offset: "+00:00",
+        week_number: 31,
+      },
     },
     {
       text: "Текст записи",
       sign: "Подпись автора",
       tz: "",
-      date: "2022-10-02.2342-344232-5345345-UTF",
+      date: {
+        abbreviation: "GMT",
+        client_ip: "89.250.166.226",
+        datetime: "2022-08-07T20:21:44.115170+00:00",
+        day_of_week: 0,
+        day_of_year: 219,
+        dst: false,
+        dst_from: null,
+        dst_offset: 0,
+        dst_until: null,
+        raw_offset: 0,
+        timezone: "Africa/Abidjan",
+        unixtime: 1659903704,
+        utc_datetime: "2022-08-07T20:21:44.115170+00:00",
+        utc_offset: "+00:00",
+        week_number: 31,
+      },
     },
   ],
   timezone: [],
-  timezoneStatus: "idle",
+  timezoneStatus: "",
+  currentNoteStatus: "",
 };
 
-export const getNotes = createAsyncThunk("notes/getNotes", async () => {
+export const getTimezone = createAsyncThunk("notes/getTimezone", async () => {
   const response = await axios.get("https://worldtimeapi.org/api/timezone");
+  return response.data;
+});
+
+export const addNote = createAsyncThunk("notes/addNote", async (note) => {
+  const response = await axios.get(
+    "https://worldtimeapi.org/api/timezone/" + note.tz
+  );
   return response.data;
 });
 
 export const noteCardSlice = createSlice({
   name: "noteCard",
   initialState,
-  reducers: {
-    cardAdded: (state, action) => {
-      state.data.push(action.payload);
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getNotes.pending, (state, action) => {
+      .addCase(getTimezone.pending, (state, action) => {
         state.timezoneStatus = "loading";
       })
-      .addCase(getNotes.fulfilled, (state, action) => {
+      .addCase(getTimezone.fulfilled, (state, action) => {
         state.timezoneStatus = "succeeded";
         state.timezone = action.payload;
       })
-      .addCase(getNotes.rejected, (state, action) => {
+      .addCase(getTimezone.rejected, (state, action) => {
         state.timezoneStatus = "failed";
-        // state.error = action.error.message
+      })
+      .addCase(addNote.pending, (state, action) => {
+        state.currentNoteStatus = "loading";
+      })
+      .addCase(addNote.fulfilled, (state, action) => {
+        state.currentNoteStatus = "succeeded";
+        state.data.push({ ...action.meta.arg, date: action.payload });
+      })
+      .addCase(addNote.rejected, (state, action) => {
+        state.currentNoteStatus = "failed";
       });
   },
 });
@@ -55,5 +100,7 @@ export const { cardAdded } = noteCardSlice.actions;
 export const selectNotes = (state) => state.noteCard.data;
 export const selectTimezone = (state) => state.noteCard.timezone;
 export const selectTimezoneStatus = (state) => state.noteCard.timezoneStatus;
+export const selectCurrentNoteStatus = (state) =>
+  state.noteCard.currentNoteStatus;
 
 export default noteCardSlice.reducer;
