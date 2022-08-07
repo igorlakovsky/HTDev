@@ -1,19 +1,21 @@
 import { Button, Col, Form, Input, Pagination, Row, Select, Tabs } from "antd";
 
-import NoteCard from "./components/note-card";
+import NoteCard from "./components/NoteCard";
 import React from "react";
-import { createRoot } from "react-dom/client";
+import { useDispatch } from "react-redux";
 
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
-function App() {
+export default function App() {
   //   const data = {
   //     text: String,
   //     sign: String,
   //     tz: String,
   //     date: Record<string,any>,
   //   };
+
+  const dispatch = useDispatch();
 
   const data = [
     {
@@ -79,7 +81,7 @@ function App() {
   ];
 
   return (
-    <Row justify="center" style={{ marginTop: "30px" }}>
+    <Row justify="center" style={{ paddingTop: "30px" }}>
       <Col span={20}>
         <Tabs defaultActiveKey="1" size="large">
           <TabPane tab="Создать запись" key="1">
@@ -139,7 +141,14 @@ function App() {
                 </Col>
                 <Col span={6} offset={18}>
                   <Form.Item>
-                    <Button type="primary" block size="large">
+                    <Button
+                      type="primary"
+                      block
+                      size="large"
+                      onClick={() => {
+                        dispatch({ type: "noteCard/increment" });
+                      }}
+                    >
                       Создать
                     </Button>
                   </Form.Item>
@@ -171,6 +180,3 @@ function App() {
     </Row>
   );
 }
-
-const root = createRoot(document.getElementById("root"));
-root.render(<App />);

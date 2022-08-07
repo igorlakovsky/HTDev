@@ -1,10 +1,21 @@
 import "antd/dist/antd.css";
 
-function root() {
-  const element = document.createElement("div");
-  element.setAttribute("id", "root");
+import App from "./App";
+import { Provider } from "react-redux";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import store from "./app/store";
 
-  return element;
-}
+const rootElement = document.createElement("div");
+rootElement.setAttribute("id", "root");
 
-document.body.appendChild(root());
+document.body.appendChild(rootElement);
+
+const root = createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
