@@ -1,54 +1,10 @@
+import { addStorageNote, getStorageNotes } from "../app/localStorage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import axios from "axios";
 
 const initialState = {
-  data: [
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: {
-        abbreviation: "GMT",
-        client_ip: "89.250.166.226",
-        datetime: "2022-08-07T20:21:44.115170+00:00",
-        day_of_week: 0,
-        day_of_year: 219,
-        dst: false,
-        dst_from: null,
-        dst_offset: 0,
-        dst_until: null,
-        raw_offset: 0,
-        timezone: "Africa/Abidjan",
-        unixtime: 1659903704,
-        utc_datetime: "2022-08-07T20:21:44.115170+00:00",
-        utc_offset: "+00:00",
-        week_number: 31,
-      },
-    },
-    {
-      text: "Текст записи",
-      sign: "Подпись автора",
-      tz: "",
-      date: {
-        abbreviation: "GMT",
-        client_ip: "89.250.166.226",
-        datetime: "2022-08-07T20:21:44.115170+00:00",
-        day_of_week: 0,
-        day_of_year: 219,
-        dst: false,
-        dst_from: null,
-        dst_offset: 0,
-        dst_until: null,
-        raw_offset: 0,
-        timezone: "Africa/Abidjan",
-        unixtime: 1659903704,
-        utc_datetime: "2022-08-07T20:21:44.115170+00:00",
-        utc_offset: "+00:00",
-        week_number: 31,
-      },
-    },
-  ],
+  data: getStorageNotes(),
   timezone: [],
   timezoneStatus: "",
   currentNoteStatus: "",
@@ -63,7 +19,7 @@ export const addNote = createAsyncThunk("notes/addNote", async (note) => {
   const response = await axios.get(
     "https://worldtimeapi.org/api/timezone/" + note.tz
   );
-  return response.data;
+  return response.data.datetime;
 });
 
 export const noteCardSlice = createSlice({
@@ -88,6 +44,7 @@ export const noteCardSlice = createSlice({
       .addCase(addNote.fulfilled, (state, action) => {
         state.currentNoteStatus = "succeeded";
         state.data.push({ ...action.meta.arg, date: action.payload });
+        addStorageNote({ ...action.meta.arg, date: action.payload });
       })
       .addCase(addNote.rejected, (state, action) => {
         state.currentNoteStatus = "failed";

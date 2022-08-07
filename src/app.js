@@ -1,4 +1,14 @@
-import { Button, Col, Form, Input, Pagination, Row, Select, Tabs } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Pagination,
+  Row,
+  Select,
+  Tabs,
+  message,
+} from "antd";
 import React, { useEffect } from "react";
 import {
   addNote,
@@ -30,8 +40,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log(notesData);
-  }, [notesData]);
+    if (currentNoteStatus === "succeeded") {
+      message.success("Запись сохранена");
+      form.setFieldValue("text", "");
+    }
+    if (currentNoteStatus === "failed") {
+      message.error("Произошла ошибка");
+    }
+  }, [currentNoteStatus]);
+
+  // useEffect(() => {
+  //   console.log(notesData);
+  // }, [notesData]);
 
   return (
     <Row justify="center" style={{ paddingTop: "30px" }}>
@@ -45,8 +65,6 @@ export default function App() {
               initialValues={{ remember: true }}
               autoComplete="off"
               requiredMark={false}
-              //   onFinish={onFinish}
-              //   onFinishFailed={onFinishFailed}
             >
               <Row gutter={[24, 0]}>
                 <Col span={24}>
@@ -73,8 +91,15 @@ export default function App() {
                         message: "Введите подпись автора!",
                       },
                     ]}
+                    initialValue={localStorage.getItem("currentSign")}
                   >
-                    <Input maxLength={100} size="large" />
+                    <Input
+                      maxLength={100}
+                      size="large"
+                      onChange={(e) => {
+                        localStorage.setItem("currentSign", e.target.value);
+                      }}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -89,10 +114,14 @@ export default function App() {
                         message: "Выберете часовой пояс!",
                       },
                     ]}
+                    initialValue={localStorage.getItem("currentTimezone")}
                   >
                     <Select
                       size="large"
                       disabled={timezoneStatus !== "succeeded"}
+                      onSelect={(timezone) => {
+                        localStorage.setItem("currentTimezone", timezone);
+                      }}
                     >
                       {timezone.map((value, index) => {
                         return (
@@ -117,7 +146,6 @@ export default function App() {
                           .validateFields()
                           .then(() => {
                             dispatch(addNote(form.getFieldsValue()));
-                            form.setFieldValue("text", "");
                           })
                           .catch(() => {});
                       }}
