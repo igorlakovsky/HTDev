@@ -10,7 +10,14 @@ type AppProps = {
 export default function NoteCard({ data, index }: AppProps) {
   return (
     <Card>
-      <div style={{ fontSize: "16px", fontWeight: 400, color: "darkgray" }}>
+      <div
+        style={{
+          fontSize: "16px",
+          fontWeight: 400,
+          color: "darkgray",
+          overflow: "hidden",
+        }}
+      >
         {data.sign}
       </div>
       <div style={{ fontSize: "20px", fontWeight: 500 }}>Запись №{index}</div>
@@ -23,6 +30,9 @@ export default function NoteCard({ data, index }: AppProps) {
           fontWeight: 400,
           color: "darkgray",
           marginTop: "14px",
+          height: "1.25em",
+          lineHeight: 1.25,
+          overflow: "hidden",
         }}
       >
         {data.text}

@@ -20,10 +20,11 @@ import {
   selectTimezoneStatus,
 } from "./components/noteCardSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 import { AppDispatch } from "./app/store";
 import NoteCard from "./components/NoteCard";
-import { useEffect } from "react";
+import { getStorageNotesCount } from "./app/localStorage";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -37,6 +38,8 @@ export default function App() {
 
   const dispatch = useDispatch<AppDispatch>();
   const [form] = Form.useForm();
+
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
     dispatch(getTimezone());
@@ -159,19 +162,26 @@ export default function App() {
           <TabPane tab="Записи" key="2">
             <Row gutter={[16, 16]}>
               {notesData.map((value, index) => {
-                return (
-                  <Col span={12} key={index}>
-                    <NoteCard data={value} index={index + 1} />
-                  </Col>
-                );
+                if ((pageNumber - 1) * 10 <= index && index < pageNumber * 10) {
+                  // Ну и придумал конечно))
+                  return (
+                    <Col span={12} key={index}>
+                      <NoteCard data={value} index={index + 1} />
+                    </Col>
+                  );
+                }
               })}
             </Row>
             <div style={{ textAlign: "center" }}>
               <Pagination
                 size="small"
                 defaultCurrent={1}
-                total={50}
+                total={getStorageNotesCount()}
+                pageSize={10}
                 style={{ margin: "15px 0px 40px 0px" }}
+                onChange={(page) => {
+                  setPageNumber(page);
+                }}
               />
             </div>
           </TabPane>

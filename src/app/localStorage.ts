@@ -13,7 +13,7 @@ if (localStorage.length === 0) {
 }
 
 // Получение количества записей из localStorage
-const getStorageNotesCount = () => {
+export const getStorageNotesCount = () => {
   return (localStorage.length - 2) / 4; // localStorage имеет два ключа для подписи и часового пояса, а также каждая запись имеет 4 ключа
 };
 
