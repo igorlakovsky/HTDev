@@ -1,7 +1,13 @@
-import { Card } from "antd";
-import React from "react";
+import * as React from "react";
 
-export default function NoteCard({ data, index }) {
+import { Card } from "antd";
+
+type AppProps = {
+  data: { text: string; sign: string; tz: string; date: string };
+  index: number;
+};
+
+export default function NoteCard({ data, index }: AppProps) {
   return (
     <Card>
       <div style={{ fontSize: "16px", fontWeight: 400, color: "darkgray" }}>

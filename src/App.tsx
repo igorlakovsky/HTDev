@@ -1,3 +1,5 @@
+import * as React from "react";
+
 import {
   Button,
   Col,
@@ -9,7 +11,6 @@ import {
   Tabs,
   message,
 } from "antd";
-import React, { useEffect } from "react";
 import {
   addNote,
   getTimezone,
@@ -20,7 +21,9 @@ import {
 } from "./components/noteCardSlice";
 import { useDispatch, useSelector } from "react-redux";
 
+import { AppDispatch } from "./app/store";
 import NoteCard from "./components/NoteCard";
+import { useEffect } from "react";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -32,7 +35,7 @@ export default function App() {
   const timezoneStatus = useSelector(selectTimezoneStatus);
   const currentNoteStatus = useSelector(selectCurrentNoteStatus);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -48,10 +51,6 @@ export default function App() {
       message.error("Произошла ошибка");
     }
   }, [currentNoteStatus]);
-
-  // useEffect(() => {
-  //   console.log(notesData);
-  // }, [notesData]);
 
   return (
     <Row justify="center" style={{ paddingTop: "30px" }}>
@@ -119,11 +118,11 @@ export default function App() {
                     <Select
                       size="large"
                       disabled={timezoneStatus !== "succeeded"}
-                      onSelect={(timezone) => {
+                      onSelect={(timezone: string) => {
                         localStorage.setItem("currentTimezone", timezone);
                       }}
                     >
-                      {timezone.map((value, index) => {
+                      {timezone.map((value: string, index: number) => {
                         return (
                           <Option value={value} key={index}>
                             {value}

@@ -5,7 +5,7 @@ import axios from "axios";
 
 const initialState = {
   data: getStorageNotes(),
-  timezone: [],
+  timezone: [] as string[],
   timezoneStatus: "",
   currentNoteStatus: "",
 };
@@ -15,12 +15,15 @@ export const getTimezone = createAsyncThunk("notes/getTimezone", async () => {
   return response.data;
 });
 
-export const addNote = createAsyncThunk("notes/addNote", async (note) => {
-  const response = await axios.get(
-    "https://worldtimeapi.org/api/timezone/" + note.tz
-  );
-  return response.data.datetime;
-});
+export const addNote = createAsyncThunk(
+  "notes/addNote",
+  async (note: { text: string; sign: string; tz: string; date: string }) => {
+    const response = await axios.get(
+      "https://worldtimeapi.org/api/timezone/" + note.tz
+    );
+    return response.data.datetime;
+  }
+);
 
 export const noteCardSlice = createSlice({
   name: "noteCard",
@@ -42,9 +45,9 @@ export const noteCardSlice = createSlice({
         state.currentNoteStatus = "loading";
       })
       .addCase(addNote.fulfilled, (state, action) => {
+        addStorageNote({ ...action.meta.arg, date: action.payload });
         state.currentNoteStatus = "succeeded";
         state.data.push({ ...action.meta.arg, date: action.payload });
-        addStorageNote({ ...action.meta.arg, date: action.payload });
       })
       .addCase(addNote.rejected, (state, action) => {
         state.currentNoteStatus = "failed";
@@ -52,12 +55,18 @@ export const noteCardSlice = createSlice({
   },
 });
 
-export const { cardAdded } = noteCardSlice.actions;
-
-export const selectNotes = (state) => state.noteCard.data;
-export const selectTimezone = (state) => state.noteCard.timezone;
-export const selectTimezoneStatus = (state) => state.noteCard.timezoneStatus;
-export const selectCurrentNoteStatus = (state) =>
-  state.noteCard.currentNoteStatus;
+export const selectNotes = (state: {
+  noteCard: {
+    data: { text: string; sign: string; tz: string; date: string }[];
+  };
+}) => state.noteCard.data;
+export const selectTimezone = (state: { noteCard: { timezone: string[] } }) =>
+  state.noteCard.timezone;
+export const selectTimezoneStatus = (state: {
+  noteCard: { timezoneStatus: string };
+}) => state.noteCard.timezoneStatus;
+export const selectCurrentNoteStatus = (state: {
+  noteCard: { currentNoteStatus: string };
+}) => state.noteCard.currentNoteStatus;
 
 export default noteCardSlice.reducer;

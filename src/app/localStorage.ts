@@ -32,7 +32,12 @@ export const getStorageNotes = () => {
 };
 
 // Добавление записи в localStorage
-export const addStorageNote = (note) => {
+export const addStorageNote = (note: {
+  text: string;
+  sign: string;
+  tz: string;
+  date: string;
+}) => {
   const notesCount = getStorageNotesCount();
   localStorage.setItem("text_" + notesCount, note.text);
   localStorage.setItem("sign_" + notesCount, note.sign);
